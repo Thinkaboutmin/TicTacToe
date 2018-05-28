@@ -1,5 +1,5 @@
 #! python3
-# TODO
+
 # Made by Thinkaboutmin
 # and
 # Made with Pycharm The glamorous IDE
@@ -8,7 +8,6 @@
 
 # This code is made by a total noob dev, don't expect ninja tech here
 
-# FIXME When there's a victory, it prints multiple times
 # ------------------------------------------ Imports ---------------------------------------------
 
 import copy
@@ -53,8 +52,9 @@ class TicTacToe:
                 tmp.append(self.players[i]["Rows"][diagonal_form][diagonal_form])
             diagonal.append(copy.copy(tmp))
             tmp = []
-            for diagonal_form in self.players[i]["Column"]:
-                tmp.append(self.players[i]["Rows"][diagonal_form][diagonal_form - self.area[1]])
+            inverter = (i for i in range(-self.area[1], 0))  # Creates a generator because I was lazy...
+            for diagonal_form in reversed(self.players[i]["Column"]):  # Reverse the list
+                tmp.append(self.players[i]["Rows"][diagonal_form][next(inverter)])
             diagonal.append(copy.copy(tmp))
             del tmp
             if diagonal[0] == checker:
@@ -88,8 +88,7 @@ class TicTacToe:
             row_list.clear()
         row_dict["Merged"] = []
         if self.players[self.players_tuple[0]] == self.players[self.players_tuple[1]]:
-            _copy = copy.copy(row_dict[self.players_tuple[0]])
-            row_dict["Merged"] = _copy  # FIXME There's no use for pointers here...
+            row_dict["Merged"] = copy.copy(row_dict[self.players_tuple[0]])
         else:
             for i in range(self.area[1]):
                 tmp = zip(row_dict[self.players_tuple[0]][i], row_dict[self.players_tuple[1]][i])
@@ -110,7 +109,6 @@ class TicTacToe:
                     continue
             row_dict["Merged"] = row_list
         self.steps = row_dict["Merged"]
-        # row_dict["Merged"].append(copy.copy(merge))
         return row_dict["Merged"]
 
     def _table(self):
@@ -139,7 +137,7 @@ class TicTacToe:
                 self._warn("Incorrect value, please insert accordingly")
             else:
                 _input = int(_input) - 1
-                _input = (_input % 3, int(_input / 3))
+                _input = (_input % self.area[1], int(_input / self.area[0]))
                 if self.steps[_input[1]][_input[0]] != " ":
                     self._warn("This place have been occupied")
                     continue
@@ -147,14 +145,16 @@ class TicTacToe:
                     self.players[self.players_tuple[self.turn]]["Rows"][_input[1]][_input[0]] = 1
                     break
 
-    def play(self):
-        self._table()
+    def win(self):
         win = self._win_check()
         if win:
             print("The player {} won!".format(win))
             return True
         else:
             del win  # This makes no sense, but I still did it :P
+
+    def play(self):
+        self._table()
         self._move()
 
     def _warn(self, msg, bol=True):
@@ -172,6 +172,10 @@ if __name__ == "__main__":
     play_times = tic_tac.area[0] * tic_tac.area[1]
     while play_times != 0:
         tic_tac.play()
-        play_times -= 1
+        if tic_tac.win():
+            break
+        else:
+            play_times -= 1
+
 else:
     raise Warning("This probably shouldn't be imported")
