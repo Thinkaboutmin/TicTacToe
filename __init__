@@ -1,0 +1,181 @@
+#! python3
+# TODO
+# Made by Thinkaboutmin
+# and
+# Made with Pycharm The glamorous IDE
+
+# Another silly program, which uses tons of for loops
+
+# This code is made by a total noob dev, don't expect ninja tech here
+
+# FIXME When there's a victory, it prints multiple times
+# ------------------------------------------ Imports ---------------------------------------------
+
+import copy
+import warnings as warn
+from time import sleep
+
+# ------------------------------------------- Class -----------------------------------------------
+
+
+class TicTacToe:
+    def __init__(self):
+        # Define all possible variables at start
+
+        self.area = (3, 3)  # First is columns and after is rows. This is wrongly commented though
+        self.area_spec = {"Column": [i for i in range(self.area[0])],
+                          "Rows": [[0 for _ in range(self.area[1])]for _ in range(self.area[1])]}  # Define the area
+        self.players = {"A": {str(i): self.area_spec[i] for i in self.area_spec.keys()}}  # Define the first player
+        self.players["B"] = copy.deepcopy(self.players["A"])  # Copy the same value from the player A to the player B
+        self.players_tuple = tuple(self.players.keys())
+        self.steps = []
+        self.turn = 0  # This should be the only value which shouldn't be changed, as it doesn't work dynamically
+
+    def _win_check(self):
+        # This method verify if the player matched the requirement to win
+        # Although silly, it works
+        # TODO horizontal check
+        checker = [1 for _ in range(self.area[1])]  # I would transform this into a tuple, but the effort is not worthy
+        for i in self.players_tuple:
+            diagonal = []
+            tmp = []
+            for row in self.players[i]["Rows"]:
+                if row == checker:
+                    return i
+                else:
+                    continue
+            for column in list(zip(self.players[i]["Rows"])):  # Use the built-in zip to return a column or "zipped"
+                if column == checker:
+                    return i
+                else:
+                    continue
+            for diagonal_form in self.players[i]["Column"]:
+                print(diagonal_form)
+                tmp.append(self.players[i]["Rows"][diagonal_form][diagonal_form])
+                print(tmp)
+            diagonal.append(copy.copy(tmp))
+            tmp = []
+            for diagonal_form in self.players[i]["Column"]:
+                print(diagonal_form)
+                tmp.append(self.players[i]["Rows"][diagonal_form][diagonal_form - self.area[1]])
+                print(tmp)
+            diagonal.append(copy.copy(tmp))
+            del tmp
+            if diagonal[0] == checker:
+                return i
+            elif diagonal[1] == checker:
+                return i
+            else:
+                continue
+
+        return False
+
+    def _table_check(self):
+        # Check the table situation and returns a merged one
+        # The merged table is based on the players table
+
+        row_dict = {}
+        row_list = []
+        row_tmp = []
+        for o in self.players_tuple:
+            for rows in self.players[o]["Rows"]:
+                for line in rows:
+                    if line and o == self.players_tuple[0]:
+                        row_tmp.append("X")
+                    elif line and o == self.players_tuple[1]:
+                        row_tmp.append("O")
+                    else:
+                        row_tmp.append(" ")
+                row_list.append(copy.copy(row_tmp))
+                row_tmp.clear()
+            row_dict[o] = copy.deepcopy(row_list)
+            row_list.clear()
+        row_dict["Merged"] = []
+        if self.players[self.players_tuple[0]] == self.players[self.players_tuple[1]]:
+            _copy = copy.copy(row_dict[self.players_tuple[0]])
+            row_dict["Merged"] = _copy  # FIXME There's no use for pointers here...
+        else:
+            for i in range(self.area[1]):
+                tmp = zip(row_dict[self.players_tuple[0]][i], row_dict[self.players_tuple[1]][i])
+                for t in tmp:
+                    t = list(t)
+                    t.remove(" ")
+                    row_dict["Merged"].append(t)
+            cnt = 0
+            while self.area[1] - len(row_dict["Merged"]) != self.area[1]:
+                row_tmp.append(row_dict["Merged"][0][0])
+                del row_dict["Merged"][0]
+                cnt += 1
+                if cnt % self.area[1] == 0:
+                    row_list.append(copy.copy(row_tmp))
+                    row_tmp.clear()
+                    continue
+                else:
+                    continue
+            row_dict["Merged"] = row_list
+        self.steps = row_dict["Merged"]
+        # row_dict["Merged"].append(copy.copy(merge))
+        return row_dict["Merged"]
+
+    def _table(self):
+        table = self._table_check()
+        for i in range(self.area[1]):
+            print("||".join(table[i]) +
+                  "\n" + "-" * 8)
+
+    def _move(self):
+        if self.turn == 0:
+            player = self.players_tuple[self.turn]
+            self.turn += 1
+        else:
+            player = self.players_tuple[self.turn]
+            self.turn -= 1
+        while True:
+            print("You are the {}".format(player))
+
+            _input = input("Please insert the number according to the position of the table\n" +
+                           "it start from {} ".format(self.area[0] - self.area[1] + 1) +
+                           "to {}".format(self.area[0] * self.area[1]))
+            if not _input.isdigit():
+                self._warn("Not a integer. VALUE:{}".format(_input))
+                continue
+            elif int(_input) > self.area[0] * self.area[1]:
+                self._warn("Incorrect value, please insert accordingly")
+            else:
+                _input = int(_input) - 1
+                _input = (_input % 3, int(_input / 3))
+                if self.steps[_input[1]][_input[0]] != " ":
+                    self._warn("This place have been occupied")
+                    continue
+                else:
+                    self.players[self.players_tuple[self.turn]]["Rows"][_input[1]][_input[0]] = 1
+                    break
+
+    def play(self):
+        self._table()
+        win = self._win_check()
+        if win:
+            print("The player {} won!".format(win))
+            return True
+        else:
+            del win  # This makes no sense, but I still did it :P
+        self._move()
+
+    def _warn(self, msg, bol=True):
+        warn.warn(msg)
+        sleep(2)
+        if bol:
+            self._table()
+        else:
+            pass
+
+
+# ----------------------------------------- Start Code -------------------------------------------------
+if __name__ == "__main__":
+    tic_tac = TicTacToe()
+    play_times = tic_tac.area[0] * tic_tac.area[1]
+    while play_times != 0:
+        tic_tac.play()
+        play_times -= 1
+else:
+    raise Warning("This probably shouldn't be imported")
