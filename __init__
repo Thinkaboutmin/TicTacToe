@@ -50,15 +50,11 @@ class TicTacToe:
                 else:
                     continue
             for diagonal_form in self.players[i]["Column"]:
-                print(diagonal_form)
                 tmp.append(self.players[i]["Rows"][diagonal_form][diagonal_form])
-                print(tmp)
             diagonal.append(copy.copy(tmp))
             tmp = []
             for diagonal_form in self.players[i]["Column"]:
-                print(diagonal_form)
                 tmp.append(self.players[i]["Rows"][diagonal_form][diagonal_form - self.area[1]])
-                print(tmp)
             diagonal.append(copy.copy(tmp))
             del tmp
             if diagonal[0] == checker:
