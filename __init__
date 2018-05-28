@@ -45,7 +45,7 @@ class TicTacToe:
                 else:
                     continue
             for column in list(zip(self.players[i]["Rows"])):  # Use the built-in zip to return a column or "zipped"
-                if column == checker:
+                if list(column) == checker:
                     return i
                 else:
                     continue
