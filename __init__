@@ -44,7 +44,7 @@ class TicTacToe:
                     return i
                 else:
                     continue
-            for column in list(zip(self.players[i]["Rows"])):  # Use the built-in zip to return a column or "zipped"
+            for column in list(zip(*self.players[i]["Rows"])):  # Use the built-in zip to return a column or "zipped"
                 if list(column) == checker:
                     return i
                 else:
