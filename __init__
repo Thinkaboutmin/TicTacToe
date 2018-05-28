@@ -129,7 +129,7 @@ class TicTacToe:
 
             _input = input("Please insert the number according to the position of the table\n" +
                            "it start from {} ".format(self.area[0] - self.area[1] + 1) +
-                           "to {}".format(self.area[0] * self.area[1]))
+                           "to {}\n".format(self.area[0] * self.area[1]))
             if not _input.isdigit():
                 self._warn("Not a integer. VALUE:{}".format(_input))
                 continue
@@ -149,6 +149,7 @@ class TicTacToe:
         win = self._win_check()
         if win:
             print("The player {} won!".format(win))
+            self._table()
             return True
         else:
             del win  # This makes no sense, but I still did it :P
