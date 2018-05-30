@@ -21,7 +21,7 @@ class TicTacToe:
     def __init__(self):
         # Define all possible variables at start
 
-        self.area = (3, 3)  # First is columns and after is rows. This is wrongly commented though
+        self.area = (3, 3)  # First is columns and after is rows. This is wrongly commented though and used
         self.area_spec = {"Column": [i for i in range(self.area[0])],
                           "Rows": [[0 for _ in range(self.area[1])]for _ in range(self.area[1])]}  # Define the area
         self.players = {"A": {str(i): self.area_spec[i] for i in self.area_spec.keys()}}  # Define the first player
@@ -33,7 +33,7 @@ class TicTacToe:
     def _win_check(self):
         # This method verify if the player matched the requirement to win
         # Although silly, it works
-        # TODO horizontal check
+        
         checker = [1 for _ in range(self.area[1])]  # I would transform this into a tuple, but the effort is not worthy
         for i in self.players_tuple:
             diagonal = []
